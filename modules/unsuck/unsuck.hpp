@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <thread>
 #include <cstdint>
+#include <cstring>
 
 using std::cout;
 using std::endl;
@@ -406,7 +407,11 @@ inline vector<uint8_t> readBinaryFile(string path, uint64_t start, uint64_t size
 		vector<uint8_t> buffer(clampedSize);
 		//file.seekg(start, ios::beg);
 		//file.read(reinterpret_cast<char*>(buffer.data()), clampedSize);
+#ifdef __linux__
+		fseeko64(file, start, SEEK_SET);
+#else
 		_fseeki64(file, start, SEEK_SET);
+#endif
 		fread(buffer.data(), 1, clampedSize, file);
 		fclose(file);
 
@@ -415,7 +420,11 @@ inline vector<uint8_t> readBinaryFile(string path, uint64_t start, uint64_t size
 		vector<uint8_t> buffer(size);
 		//file.seekg(start, ios::beg);
 		//file.read(reinterpret_cast<char*>(buffer.data()), size);
+#ifdef __linux__
+		fseeko64(file, start, SEEK_SET);
+#else
 		_fseeki64(file, start, SEEK_SET);
+#endif
 		fread(buffer.data(), 1, size, file);
 		fclose(file);
 
@@ -433,11 +442,19 @@ inline void readBinaryFile(string path, uint64_t start, uint64_t size, void* tar
 	}if (start + size > totalSize) {
 		auto clampedSize = totalSize - start;
 
+#ifdef __linux__
+		fseeko64(file, start, SEEK_SET);
+#else
 		_fseeki64(file, start, SEEK_SET);
+#endif
 		fread(target, 1, clampedSize, file);
 		fclose(file);
 	} else {
+#ifdef __linux__
+		fseeko64(file, start, SEEK_SET);
+#else
 		_fseeki64(file, start, SEEK_SET);
+#endif
 		fread(target, 1, size, file);
 		fclose(file);
 	}
@@ -541,7 +558,7 @@ T read(vector<uint8_t>& buffer, int offset) {
 
 inline string leftPad(string in, int length, const char character = ' ') {
 
-	auto reps = std::max(length - in.size(), 0ull);
+	auto reps = std::max(length - static_cast<int64_t>(in.size()), static_cast<int64_t>(0));
 	string result = string(reps, character) + in;
 
 	return result;
@@ -549,7 +566,7 @@ inline string leftPad(string in, int length, const char character = ' ') {
 
 inline string rightPad(string in, int64_t length, const char character = ' ') {
 
-	auto reps = std::max(length - int64_t(in.size()), int64_t(0));
+	auto reps = std::max(length - static_cast<int64_t>(in.size()), static_cast<int64_t>(0));
 	string result = in + string(reps, character);
 
 	return result;
