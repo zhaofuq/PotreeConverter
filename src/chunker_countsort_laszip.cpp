@@ -1097,7 +1097,7 @@ namespace chunker_countsort_laszip {
 
 		auto tStart = now();
 
-		maxPointsPerChunk = std::min(state.pointsTotal / 20, 10'000'000ll);
+		maxPointsPerChunk = std::min(static_cast<long long int>(state.pointsTotal / 20), 10'000'000ll);
 		cout << "maxPointsPerChunk: " << maxPointsPerChunk << endl;
 
 		if (state.pointsTotal < 100'000'000) {

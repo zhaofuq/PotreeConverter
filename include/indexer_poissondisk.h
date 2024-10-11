@@ -22,7 +22,7 @@
 #include "Vector3.h"
 #include "unsuck/unsuck.hpp"
 #include "unsuck/TaskPool.hpp"
-
+#include <condition_variable>
 using json = nlohmann::json;
 
 using std::atomic_int64_t;
